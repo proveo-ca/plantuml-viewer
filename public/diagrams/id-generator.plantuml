@@ -1,0 +1,44 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/proveo-ca/identity/refs/heads/main/proveo.iuml
+
+actor User
+package "UI Clients" as UI{
+    component Browser
+}
+package "API Servers" as S {
+    node "Load Balancer" as LB
+    component "API Server 1" as S1
+    component "API Server 2" as S2
+    component "API Server 3" as S3
+}
+package "ID Generation Microservice" as ID {
+   node "ID Range Microservice" as RM
+   component "ID Server 1" as ID1
+   component "ID Server 2" as ID2
+}
+package "Data Layer" as DB {
+  node "DB Proxy" as DBP
+  database "RDBMS 1" as DB1
+  database "RDBMS 2" as DB2
+}
+
+User -left-> UI
+UI <--> S : " ID Request/Response"
+
+LB <--> S1
+LB <--> S2
+LB <--> S3
+
+S <-> DBP : Generate ID
+DBP --> DB1
+DBP --> DB2
+
+S <---> ID : " Request ID Range"
+RM <--> ID1
+RM <--> ID2
+
+ID <--> DBP : " Allocate Range"
+
+note bottom of DB1 : "Generate odd IDs"
+note bottom of DB2 : "Generate even IDs"
+@enduml

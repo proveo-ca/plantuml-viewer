@@ -1,0 +1,9 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/proveo-ca/identity/refs/heads/main/proveo.iuml
+
+actor Different
+(Yes) - [New]
+[New] --> Different
+
+note right of Different : I'm Different!
+@enduml
